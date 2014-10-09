@@ -91,6 +91,27 @@ def StringEqualIgnoringCase(subject, object_):
 #    return productF
 
 
+
+def MathNotEqualTo(subject, object_):
+    for term in [subject, object_]:
+        if not isinstance(term, Variable):
+            assert isinstance(term, Literal), \
+                "math:notEqualTo can only be used with Literals (%s)" % term
+            assert isinstance(term.toPython(), (int, long, float)), \
+                "math:notEqualTo can only be used " + \
+                "with Numeric Literals (%s)" % term
+
+    def func(s, o):
+        for term in [s, o]:
+            assert isinstance(term, Literal), \
+                "math:notEqualTo can only be used with Literals (%s)" % term
+            assert isinstance(term.toPython(), (int, long, float)), \
+                "math:notEqualTo can only be used with " + \
+                "Numeric Literals (%s)" % term
+        return s.toPython() != o.toPython()
+    return func
+
+
 def MathEqualTo(subject, object_):
     for term in [subject, object_]:
         if not isinstance(term, Variable):
@@ -181,7 +202,7 @@ FILTERS = {
     MATH_NS.equalTo: MathEqualTo,
     MATH_NS.greaterThan: MathGreaterThan,
     MATH_NS.lessThan: MathLessThan,
-    MATH_NS.notEqualTo: None,
+    MATH_NS.notEqualTo: MathNotEqualTo,
     MATH_NS.notGreaterThan: None,
     MATH_NS.notLessThan: MathNotLessThan,
     STRING_NS.contains: StringContains,
